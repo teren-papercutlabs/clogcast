@@ -40,6 +40,7 @@ program
   .version('1.0.0')
   .allowUnknownOption()
   .helpOption(false)
+  .allowExcessArguments()
   .parse(process.argv);
 
 // Get the command and arguments after 'clogcast'
