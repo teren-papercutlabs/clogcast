@@ -1,0 +1,43 @@
+{
+  "name": "clogcast",
+  "version": "1.0.0",
+  "description": "Zero-config log sharing for Claude Code - makes any application's logs visible to Claude",
+  "main": "dist/index.js",
+  "bin": {
+    "clogcast": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js",
+    "prepublish": "npm run build"
+  },
+  "keywords": [
+    "claude",
+    "mcp",
+    "logs",
+    "debugging",
+    "cli"
+  ],
+  "author": "Papercut Labs",
+  "license": "MIT",
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "commander": "^14.0.0",
+    "cross-spawn": "^7.0.3",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.6",
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.0.1",
+    "typescript": "^5.8.3"
+  }
+}
