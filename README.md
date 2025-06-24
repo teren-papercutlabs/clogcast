@@ -1,16 +1,18 @@
 # Clogcast
 
-Zero-config log sharing for Claude Code - makes any application's logs visible to Claude.
+Zero-config log sharing for AI coding assistants - makes any application's logs visible to Claude Code and Cursor.
 
 ## What is Clogcast?
 
-Clogcast is a transparent command-line wrapper that captures and shares application logs with Claude Code. Simply prefix any command with `clogcast` to make its output available to Claude for debugging and analysis.
+When using AI coding tools like Claude Code or Cursor, developers have traditionally needed to copy and paste terminal output to share error messages and logs with the AI assistant. This manual process interrupts the development flow and prevents the AI from autonomously detecting and fixing issues.
+
+Clogcast solves this by transparently capturing your application's output and making it available to AI assistants through the Model Context Protocol (MCP). Simply prefix any command with `clogcast` and your AI assistant can read the logs directly, enabling it to understand what's happening and self-correct errors without manual intervention.
 
 ```bash
-# Before (Claude can't see logs)
+# Before (manually copy/paste logs to AI)
 npm run dev
 
-# After (Claude can see everything)
+# After (AI reads logs directly)
 clogcast npm run dev
 ```
 
@@ -20,8 +22,7 @@ clogcast npm run dev
 - **Universal**: Works with any command or application
 - **Transparent**: Your terminal experience remains unchanged
 - **Cross-Platform**: Works on macOS, Linux, and Windows
-- **Fire-and-Forget**: Never blocks or slows down your application
-- **Shared Buffer**: All Claude instances can access the same logs
+- **Shared Buffer**: All AI assistant instances can access the same logs
 
 ## Installation
 
@@ -53,6 +54,12 @@ npm list -g clogcast
 
 ## Usage
 
+### Important Note
+
+**Claude Code users**: You must start Claude Code first before running any `clogcast` commands. Claude Code loads MCP servers on startup.
+
+**Cursor users**: MCP servers load automatically when the IDE starts, so you can use `clogcast` immediately.
+
 ### Basic Usage
 
 Simply prefix any command with `clogcast`:
@@ -61,42 +68,25 @@ Simply prefix any command with `clogcast`:
 # Node.js applications
 clogcast npm run dev
 clogcast npm test
-clogcast node server.js
 
 # Python applications
 clogcast python app.py
 clogcast pytest
-clogcast flask run
-
-# Any other command
-clogcast docker-compose up
-clogcast cargo run
-clogcast make build
 ```
 
 ### Using with Claude Code
 
-Once your application is running with clogcast, Claude can access the logs using MCP tools:
+Once your application is running with clogcast, you can ask Claude Code to examine the logs. For example:
 
-```javascript
-// Get recent logs
-const logs = await mcp.call('get_logs', { limit: 100 });
+- "Can you check the logs for any errors?"
+- "What's causing the database connection to fail?"
+- "Show me the recent API requests in the logs"
 
-// Filter by output type
-const errors = await mcp.call('get_logs', { level: 'stderr' });
-
-// Search for specific content
-const dbLogs = await mcp.call('get_logs', { search: 'database' });
-
-// Get logs from last 5 minutes
-const recentLogs = await mcp.call('get_logs', { since_minutes: 5 });
-
-// Get log statistics
-const stats = await mcp.call('get_log_stats');
-
-// Clear log buffer
-await mcp.call('clear_logs');
-```
+Claude Code can automatically filter logs by:
+- Error output (stderr)
+- Time range (e.g., last 5 minutes)
+- Search terms (e.g., "error", "warning", "failed")
+- Number of recent entries
 
 ## How It Works
 
@@ -176,51 +166,6 @@ This usually means another clogcast instance is running, which is fine! All inst
 ### Command not found
 
 Make sure to install clogcast globally with `-g` flag, or add the local installation to your PATH.
-
-## Examples
-
-### Debugging a Node.js app
-
-```bash
-clogcast npm run dev
-```
-
-Then in Claude:
-```javascript
-// Find all error logs
-const errors = await mcp.call('get_logs', { search: 'error' });
-
-// Get database connection logs
-const dbLogs = await mcp.call('get_logs', { search: 'database' });
-```
-
-### Testing with pytest
-
-```bash
-clogcast pytest -v
-```
-
-In Claude:
-```javascript
-// Get test failures
-const failures = await mcp.call('get_logs', { level: 'stderr' });
-```
-
-### Docker compose logs
-
-```bash
-clogcast docker-compose up
-```
-
-In Claude:
-```javascript
-// Get logs from specific container
-const webLogs = await mcp.call('get_logs', { search: 'web_1' });
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## License
 
