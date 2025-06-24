@@ -14,13 +14,25 @@
   },
   "keywords": [
     "claude",
+    "claude-code",
+    "cursor",
     "mcp",
     "logs",
     "debugging",
-    "cli"
+    "cli",
+    "ai-coding",
+    "developer-tools"
   ],
   "author": "Papercut Labs",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teren-papercutlabs/clogcast.git"
+  },
+  "bugs": {
+    "url": "https://github.com/teren-papercutlabs/clogcast/issues"
+  },
+  "homepage": "https://github.com/teren-papercutlabs/clogcast#readme",
   "files": [
     "dist/**/*",
     "README.md"
