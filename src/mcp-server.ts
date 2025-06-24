@@ -27,8 +27,17 @@ app.post('/logs', (req, res) => {
   res.status(200).send('OK');
 });
 
-app.listen(LOG_SERVER_PORT, () => {
-  console.error(`Clogcast HTTP server listening on port ${LOG_SERVER_PORT}`);
+// Only start HTTP server if not already running
+const httpServer = app.listen(LOG_SERVER_PORT, () => {
+  // Use stderr to avoid interfering with MCP protocol on stdout
+  process.stderr.write(`Clogcast HTTP server listening on port ${LOG_SERVER_PORT}\n`);
+}).on('error', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    // Port already in use, this is fine - another instance is handling HTTP
+    process.stderr.write(`Clogcast HTTP server already running on port ${LOG_SERVER_PORT}\n`);
+  } else {
+    process.stderr.write(`HTTP server error: ${err.message}\n`);
+  }
 });
 
 // Define available tools

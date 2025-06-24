@@ -60,7 +60,8 @@ const commandArgs = args.slice(1);
 const child = spawn(command, commandArgs, {
   stdio: ['inherit', 'pipe', 'pipe'],
   shell: true,
-  windowsHide: true
+  windowsHide: true,
+  env: { ...process.env, FORCE_COLOR: '1' } // Preserve colors
 });
 
 // Generate a unique source identifier for this process
