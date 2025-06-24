@@ -115,7 +115,7 @@ const TOOLS: Tool[] = [
 const server = new Server(
   {
     name: 'clogcast',
-    version: '1.0.0',
+    version: '1.1.0',
   },
   {
     capabilities: {

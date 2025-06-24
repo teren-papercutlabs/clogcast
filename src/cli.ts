@@ -37,7 +37,7 @@ function sendLog(content: string, level: 'stdout' | 'stderr', source: string): v
 program
   .name('clogcast')
   .description('Zero-config log sharing for Claude Code')
-  .version('1.0.0')
+  .version('1.1.0')
   .allowUnknownOption()
   .helpOption(false)
   .allowExcessArguments()

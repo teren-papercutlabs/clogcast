@@ -105,7 +105,18 @@ Terminal → clogcast → Your App
          HTTP POST
             ↓
       MCP Server ← Claude Code
+         ↓  ↑
+      HTTP API
 ```
+
+### Multi-Instance Support
+
+Clogcast supports multiple MCP server instances sharing the same log buffer:
+
+- The first instance starts the HTTP server on port 24281
+- Additional instances detect the running server and share the log buffer
+- All Claude Code windows can access the same logs
+- Automatic fallback to local buffer if HTTP server is unavailable
 
 ## MCP Tools
 
@@ -150,6 +161,34 @@ Clogcast properly forwards all signals to the wrapped application:
 - Uses `cross-spawn` for reliable process spawning
 - Handles platform-specific shell differences
 - Works with spaces and special characters in commands
+
+### HTTP API
+
+Clogcast exposes HTTP endpoints for programmatic access to logs:
+
+#### GET /api/logs
+Query logs with optional filters:
+```bash
+curl "http://localhost:24281/api/logs?limit=10&level=stderr&search=error&since_minutes=5"
+```
+
+Query parameters:
+- `limit`: Maximum number of entries to return
+- `level`: Filter by 'stdout' or 'stderr'
+- `search`: Case-insensitive text search
+- `since_minutes`: Only logs from the last N minutes
+
+#### GET /api/stats
+Get log buffer statistics:
+```bash
+curl "http://localhost:24281/api/stats"
+```
+
+#### DELETE /api/logs
+Clear all logs:
+```bash
+curl -X DELETE "http://localhost:24281/api/logs"
+```
 
 ## Troubleshooting
 

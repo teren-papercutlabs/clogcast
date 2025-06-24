@@ -1,6 +1,6 @@
 {
   "name": "clogcast",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Zero-config log sharing for Claude Code - makes any application's logs visible to Claude",
   "main": "dist/index.js",
   "bin": {
@@ -35,7 +35,8 @@
   "homepage": "https://github.com/teren-papercutlabs/clogcast#readme",
   "files": [
     "dist/**/*",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "engines": {
     "node": ">=18.0.0"
