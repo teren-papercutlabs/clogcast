@@ -8,10 +8,10 @@ import {
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import express from 'express';
-import { LogBuffer } from './core/log-buffer';
+import { SharedLogBuffer } from './core/shared-log-buffer';
 
 const LOG_SERVER_PORT = 24281;
-const logBuffer = new LogBuffer(10000);
+const sharedBuffer = new SharedLogBuffer(10000, LOG_SERVER_PORT);
 
 // Start HTTP server for log ingestion
 const app = express();
@@ -21,9 +21,34 @@ app.post('/logs', (req, res) => {
   const { content, level, source } = req.body;
   
   if (content && level) {
-    logBuffer.add(content, level, source);
+    sharedBuffer.add(content, level, source);
   }
   
+  res.status(200).send('OK');
+});
+
+// API endpoints for querying logs
+app.get('/api/logs', (req, res) => {
+  const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  const level = req.query.level as 'stdout' | 'stderr' | undefined;
+  const search = req.query.search as string | undefined;
+  const sinceMinutes = req.query.since_minutes ? parseFloat(req.query.since_minutes as string) : undefined;
+  
+  const since = sinceMinutes 
+    ? new Date(Date.now() - sinceMinutes * 60 * 1000)
+    : undefined;
+
+  const logs = sharedBuffer.getLocalBuffer().get({ limit, level, search, since });
+  res.json(logs);
+});
+
+app.get('/api/stats', (req, res) => {
+  const stats = sharedBuffer.getLocalBuffer().getStats();
+  res.json(stats);
+});
+
+app.delete('/api/logs', (req, res) => {
+  sharedBuffer.getLocalBuffer().clear();
   res.status(200).send('OK');
 });
 
@@ -121,7 +146,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         ? new Date(Date.now() - sinceMinutes * 60 * 1000)
         : undefined;
 
-      const logs = logBuffer.get({ limit, level, search, since });
+      const logs = await sharedBuffer.get({ limit, level, search, since });
 
       return {
         content: [
@@ -134,7 +159,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     case 'clear_logs': {
-      logBuffer.clear();
+      await sharedBuffer.clear();
       return {
         content: [
           {
@@ -146,7 +171,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     case 'get_log_stats': {
-      const stats = logBuffer.getStats();
+      const stats = await sharedBuffer.getStats();
       return {
         content: [
           {
